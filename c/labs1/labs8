@@ -1,1 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
+int rand_for_x(int x, int x_end) {
+    return x + rand() % (x_end - x);
+}
+
+int rand_for_y(int y, int y_end) {
+    return y + rand() % (y_end - y);
+}
+
+void declaration_of_variables(int *first_x, int *axisEnd, int *first_y, int *l) {
+    (*l) = 0;
+    double rad;
+    int i = 0, kol_dot;
+    (*first_x) = -5;
+    (*first_y) = (*first_x);
+    (*axisEnd) = 5;
+}
+
+int main() {
+    double rad;
+    int first_x, axisEnd,first_y, i, l, kol_dot;
+    declaration_of_variables(&first_x, &axisEnd, &first_y, &l);
+    printf("Введите радиус окружности, в которой будем искать точки: ");
+    scanf("%lf", &rad);
+    FILE *file;
+    file = fopen("/home/argo/Desktop/text.dat", "w+");
+
+    for (kol_dot = 0; kol_dot < 5000; kol_dot+=300) { /*каждую итерацию увеличиваем
+ * количество точек*/
+
+        clock_t time; /* найдем время выполнения программы */
+        time = clock();
+
+        int x[kol_dot];
+        int y[kol_dot];
+
+        for (i = 0; i < kol_dot; ++i) {
+            x[i] = rand_for_x(first_x, axisEnd);
+            y[i] = rand_for_y(first_y, axisEnd);
+        }
+
+        i = 1 + rand() % (kol_dot - 1); /*тот же алгоритм */
+        printf("Координаты случайно выбранной точки [%i,%i]\n", x[i], y[i]);
+
+        i = 0;
+        while ((x[i] > 0.0000001) || (x[i] <= -0.0000001)) {
+            if (x[i] * x[i] + y[i] * y[i] <= rad * rad) {
+                l++;
+            }
+            i++;
+        }
+        printf("Количество точек, принадлежащих окружности составляет: %i\n", l);
+
+        time = clock() - time;
+        printf("Время выполнения: %f\n", (double)time/CLOCKS_PER_SEC);
+        fprintf(file, "%i %f\n",kol_dot,(double)time/CLOCKS_PER_SEC);
+
+    }
+
+    fclose(file);
+
+    return 0;
+}
